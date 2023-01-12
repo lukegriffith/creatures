@@ -91,3 +91,7 @@ func (m *Map) GetObject(ID ObjectID) (Object, error) {
 	}
 	return Object{0, 0, 0, 0, 0}, errors.New("unable to located object by ID")
 }
+
+func (m *Map) GetObjects() []Object {
+	return m.objects
+}

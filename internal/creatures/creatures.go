@@ -33,7 +33,7 @@ type Creature struct {
 }
 
 func (c Creature) Sense() {
-
+	// TO BE IMPLEMENTED
 }
 
 func SpawnCreature(wm *world.Map) Creature {
