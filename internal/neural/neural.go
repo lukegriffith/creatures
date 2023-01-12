@@ -9,6 +9,12 @@ type Brain struct {
 	network *deep.Neural
 }
 
+func NewBrain() Brain {
+	return Brain{
+		CreateNetwork(6, []int{2, 2, 4}),
+	}
+}
+
 func CreateNetwork(inputs int, layout []int) *deep.Neural {
 	return deep.NewNeural(&deep.Config{
 		/* Input dimensionality */
@@ -30,7 +36,7 @@ func CreateNetwork(inputs int, layout []int) *deep.Neural {
 	})
 }
 
-func (n *Brain) Crossover(partner *Brain) *Brain {
+func (n *Brain) Crossover(partner *Brain) Brain {
 	crossoverPoint := util.RandomInt(0, len(n.network.Layers))
 	l1 := n.network.Layers[:crossoverPoint]
 	l2 := partner.network.Layers[crossoverPoint:]
@@ -39,7 +45,7 @@ func (n *Brain) Crossover(partner *Brain) *Brain {
 
 	l3 := append(l1, l2...)
 	b3 := append(b1, b2...)
-	brain := &Brain{
+	brain := Brain{
 		&deep.Neural{
 			Layers: l3,
 			Biases: b3,
