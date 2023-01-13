@@ -1,4 +1,4 @@
-package world
+package worldMap
 
 import (
 	"errors"
@@ -43,17 +43,24 @@ func NewMap() *Map {
 	}
 }
 
-func (m *Map) AddObject(X float64, Y float64, Width float64, Height float64) ObjectID {
+func (m *Map) AddObject(X float64, Y float64, Width float64, Height float64) (ObjectID, error) {
 	bounds := quadtree.Bounds{
 		X:      X,
 		Y:      Y,
 		Width:  Width,
 		Height: Height,
 	}
+	// Does object exist within the map.
+	if !bounds.Intersects(m.qt.Bounds) {
+		return 0, errors.New("object is not within map")
+	}
+	if checkCollision(bounds, m) {
+		return 0, errors.New("collides with another")
+	}
 	obj, id := NewObject(X, Y, size, size)
 	m.qt.Insert(bounds)
 	m.objects = append(m.objects, obj)
-	return id
+	return id, nil
 }
 
 func checkCollision(bound quadtree.Bounds, m *Map) bool {
@@ -63,24 +70,20 @@ func checkCollision(bound quadtree.Bounds, m *Map) bool {
 
 func (m *Map) AddRandomObject() ObjectID {
 	placed := false
-	var bounds quadtree.Bounds
 	var x, y float64
+	var obj ObjectID
+	var err error
 
 	for !placed {
 		x = util.RandomFloat(0, width)
 		y = util.RandomFloat(0, height)
-		bounds = quadtree.Bounds{
-			X:      x,
-			Y:      y,
-			Width:  size,
-			Height: size,
+		obj, err = m.AddObject(x, y, size, size)
+		if err == nil {
+			placed = true
 		}
-		if checkCollision(bounds, m) {
-			continue
-		}
-		placed = true
 	}
-	return m.AddObject(x, y, size, size)
+
+	return obj
 }
 
 func (m *Map) GetObject(ID ObjectID) (Object, error) {
@@ -94,4 +97,8 @@ func (m *Map) GetObject(ID ObjectID) (Object, error) {
 
 func (m *Map) GetObjects() []Object {
 	return m.objects
+}
+
+func (m *Map) ClearMap() {
+	m.qt = NewMap().qt
 }

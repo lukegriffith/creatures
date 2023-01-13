@@ -7,7 +7,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/lukegriffith/creatures/internal/world"
+	"github.com/lukegriffith/creatures/internal/worldMap"
 	"golang.org/x/image/colornames"
 )
 
@@ -24,7 +24,7 @@ func renderCreature(x float64, y float64, imd *imdraw.IMDraw, win *pixelgl.Windo
 	imd.Draw(win)
 }
 
-func Render(wm *world.Map) {
+func Render(wm *worldMap.Map) {
 	var cycle int
 	cycle = 0
 

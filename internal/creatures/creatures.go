@@ -3,7 +3,7 @@ package creatures
 import (
 	"github.com/lukegriffith/creatures/internal/neural"
 	"github.com/lukegriffith/creatures/internal/util"
-	"github.com/lukegriffith/creatures/internal/world"
+	"github.com/lukegriffith/creatures/internal/worldMap"
 )
 
 type Attributes struct {
@@ -26,8 +26,8 @@ func NewRandomAttributes() Attributes {
 }
 
 type Creature struct {
-	WorldObjectID world.ObjectID
-	WorldMap      *world.Map
+	WorldObjectID worldMap.ObjectID
+	WorldMap      *worldMap.Map
 	Stats         Attributes
 	Brain         neural.Brain
 }
@@ -36,13 +36,13 @@ func (c Creature) Sense() {
 	// TO BE IMPLEMENTED
 }
 
-func SpawnCreature(wm *world.Map) Creature {
+func SpawnCreature(wm *worldMap.Map) Creature {
 	brain := neural.NewBrain()
 	stats := NewRandomAttributes()
 	return NewCreature(stats, brain, wm)
 }
 
-func BreedCreaturePair(c1 Creature, c2 Creature, wm *world.Map) Creature {
+func BreedCreaturePair(c1 Creature, c2 Creature, wm *worldMap.Map) Creature {
 	brain := c1.Brain.Crossover(&c2.Brain)
 	attr := Attributes{
 		Health:   util.RandomInt(60, 100),
@@ -54,7 +54,7 @@ func BreedCreaturePair(c1 Creature, c2 Creature, wm *world.Map) Creature {
 	return NewCreature(attr, brain, wm)
 }
 
-func NewCreature(s Attributes, b neural.Brain, wm *world.Map) Creature {
+func NewCreature(s Attributes, b neural.Brain, wm *worldMap.Map) Creature {
 	return Creature{
 		WorldObjectID: wm.AddRandomObject(),
 		WorldMap:      wm,
