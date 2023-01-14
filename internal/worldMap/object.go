@@ -10,18 +10,14 @@ type ObjectID int
 
 type Object struct {
 	ID     ObjectID
-	X      float64
-	Y      float64
-	Width  float64
-	Height float64
+	Bounds *Bounds
 }
 
-func NewObject(X float64, Y float64, Width float64, Height float64) (Object, ObjectID) {
+func NewObject(X float64, Y float64, Width float64, Height float64) Object {
 	id := oi.ID()
 	return Object{
-		id, X, Y, Width, Height,
-	}, id
-
+		id, &Bounds{id, X, Y, Width, Height},
+	}
 }
 
 type ObjectIDFactory struct {

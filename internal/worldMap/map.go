@@ -3,7 +3,6 @@ package worldMap
 import (
 	"errors"
 
-	quadtree "github.com/JamesLMilner/quadtree-go"
 	"github.com/lukegriffith/creatures/internal/util"
 )
 
@@ -14,15 +13,13 @@ var (
 )
 
 type Map struct {
-	width   float64
-	height  float64
 	objects []Object
-	qt      *quadtree.Quadtree
+	qt      *Quadtree
 }
 
 func NewMap() *Map {
-	qt := &quadtree.Quadtree{
-		Bounds: quadtree.Bounds{
+	qt := &Quadtree{
+		Bounds: Bounds{
 			X:      0,
 			Y:      0,
 			Width:  float64(width),
@@ -31,8 +28,8 @@ func NewMap() *Map {
 		MaxObjects: 1,
 		MaxLevels:  4,
 		Level:      0,
-		Objects:    make([]quadtree.Bounds, 0),
-		Nodes:      make([]quadtree.Quadtree, 0),
+		Objects:    make([]Bounds, 0),
+		Nodes:      make([]Quadtree, 0),
 	}
 
 	return &Map{
@@ -43,27 +40,22 @@ func NewMap() *Map {
 	}
 }
 
-func (m *Map) AddObject(X float64, Y float64, Width float64, Height float64) (ObjectID, error) {
-	bounds := quadtree.Bounds{
-		X:      X,
-		Y:      Y,
-		Width:  Width,
-		Height: Height,
-	}
+func (m *Map) AddObject(obj Object) error {
+	bounds := *obj.Bounds
 	// Does object exist within the map.
 	if !bounds.Intersects(m.qt.Bounds) {
-		return 0, errors.New("object is not within map")
+		return errors.New("object is not within map")
 	}
 	if checkCollision(bounds, m) {
-		return 0, errors.New("collides with another")
+		return errors.New("collides with another")
 	}
-	obj, id := NewObject(X, Y, size, size)
+
 	m.qt.Insert(bounds)
 	m.objects = append(m.objects, obj)
-	return id, nil
+	return nil
 }
 
-func checkCollision(bound quadtree.Bounds, m *Map) bool {
+func checkCollision(bound Bounds, m *Map) bool {
 	objects := m.qt.RetrieveIntersections(bound)
 	return len(objects) > 0
 }
@@ -71,19 +63,19 @@ func checkCollision(bound quadtree.Bounds, m *Map) bool {
 func (m *Map) AddRandomObject() ObjectID {
 	placed := false
 	var x, y float64
-	var obj ObjectID
+	var obj Object
 	var err error
 
 	for !placed {
 		x = util.RandomFloat(0, width)
 		y = util.RandomFloat(0, height)
-		obj, err = m.AddObject(x, y, size, size)
+		obj = NewObject(x, y, size, size)
+		err = m.AddObject(obj)
 		if err == nil {
 			placed = true
 		}
 	}
-
-	return obj
+	return obj.ID
 }
 
 func (m *Map) GetObject(ID ObjectID) (Object, error) {
@@ -92,7 +84,7 @@ func (m *Map) GetObject(ID ObjectID) (Object, error) {
 			return obj, nil
 		}
 	}
-	return Object{0, 0, 0, 0, 0}, errors.New("unable to located object by ID")
+	return Object{0, nil}, errors.New("unable to located object by ID")
 }
 
 func (m *Map) GetObjects() []Object {
@@ -100,5 +92,5 @@ func (m *Map) GetObjects() []Object {
 }
 
 func (m *Map) ClearMap() {
-	m.qt = NewMap().qt
+	m.qt.Clear()
 }
