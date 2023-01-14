@@ -8,16 +8,9 @@ var (
 
 type ObjectID int
 
-type Object struct {
-	ID     ObjectID
-	Bounds *Bounds
-}
-
-func NewObject(X float64, Y float64, Width float64, Height float64) Object {
+func NewBounds(X float64, Y float64, Width float64, Height float64) Bounds {
 	id := oi.ID()
-	return Object{
-		id, &Bounds{id, X, Y, Width, Height},
-	}
+	return Bounds{id, X, Y, Width, Height}
 }
 
 type ObjectIDFactory struct {

@@ -256,7 +256,7 @@ func TestQuadtreeRandomPointRetrieval(t *testing.T) {
 	}
 
 	if failure == false {
-		t.Logf("Success: All the points were retrieved correctly", iterations, numObjects)
+		t.Log("Success: All the points were retrieved correctly", iterations, numObjects)
 	}
 
 }

@@ -6,7 +6,7 @@ import (
 
 func TestAddingRandomsToMap(t *testing.T) {
 
-	worldMap := NewMap()
+	worldMap := NewQuadTree()
 	for i := 1; i < 5; i++ {
 		obj := worldMap.AddRandomObject()
 		t.Log(obj)
@@ -14,9 +14,11 @@ func TestAddingRandomsToMap(t *testing.T) {
 }
 
 func TestCollisionByPoint(t *testing.T) {
-	worldMap := NewMap()
-	_, _ = worldMap.AddObject(10, 10, 2, 2)
-	_, err := worldMap.AddObject(10, 10, 2, 2)
+	worldMap := NewQuadTree()
+	bounds := NewBounds(10, 10, 2, 2)
+	_ = worldMap.AddObject(bounds)
+	bounds2 := NewBounds(10, 10, 2, 2)
+	err := worldMap.AddObject(bounds2)
 	if err != nil {
 		t.Log("collision as expected")
 		return
@@ -25,9 +27,11 @@ func TestCollisionByPoint(t *testing.T) {
 }
 
 func TestCollisionBySizeCatches(t *testing.T) {
-	worldMap := NewMap()
-	_, _ = worldMap.AddObject(10, 10, 2, 2)
-	_, err := worldMap.AddObject(10, 12, 2, 2)
+	worldMap := NewQuadTree()
+	bounds := NewBounds(10, 10, 2, 2)
+	_ = worldMap.AddObject(bounds)
+	bounds2 := NewBounds(10, 12, 2, 2)
+	err := worldMap.AddObject(bounds2)
 	if err != nil {
 		t.Log("collision as expected")
 		return
@@ -36,9 +40,11 @@ func TestCollisionBySizeCatches(t *testing.T) {
 }
 
 func TestCollisionBySizeInserts(t *testing.T) {
-	worldMap := NewMap()
-	_, _ = worldMap.AddObject(10, 10, 2, 2)
-	_, err := worldMap.AddObject(10, 13, 2, 2)
+	worldMap := NewQuadTree()
+	bounds := NewBounds(10, 10, 2, 2)
+	_ = worldMap.AddObject(bounds)
+	bounds2 := NewBounds(10, 13, 2, 2)
+	err := worldMap.AddObject(bounds2)
 	if err == nil {
 		t.Log("no collision as expected")
 		return
@@ -47,14 +53,14 @@ func TestCollisionBySizeInserts(t *testing.T) {
 }
 
 func TestOutOfBounds(t *testing.T) {
-	worldMap := NewMap()
-	_, err := worldMap.AddObject(7000, 7000, 2, 2)
+	worldMap := NewQuadTree()
+	bounds := NewBounds(7000, 7000, 2, 2)
+	err := worldMap.AddObject(bounds)
 	if err == nil {
 		t.Log("object placed when out of bounds")
 		t.Fail()
 	}
-	objects := worldMap.GetObjects()
-	if len(objects) > 0 {
+	if len(worldMap.Objects) > 0 {
 		t.Log("object in object list when it shouldn't exist")
 		t.Fail()
 	}

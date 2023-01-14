@@ -12,13 +12,8 @@ var (
 	size   = float64(2)
 )
 
-type Map struct {
-	objects []Object
-	qt      *Quadtree
-}
-
-func NewMap() *Map {
-	qt := &Quadtree{
+func NewQuadTree() *Quadtree {
+	return &Quadtree{
 		Bounds: Bounds{
 			X:      0,
 			Y:      0,
@@ -31,46 +26,37 @@ func NewMap() *Map {
 		Objects:    make([]Bounds, 0),
 		Nodes:      make([]Quadtree, 0),
 	}
-
-	return &Map{
-		width:   float64(width),
-		height:  float64(height),
-		objects: make([]Object, 0),
-		qt:      qt,
-	}
 }
 
-func (m *Map) AddObject(obj Object) error {
-	bounds := *obj.Bounds
-	// Does object exist within the map.
-	if !bounds.Intersects(m.qt.Bounds) {
+func (qt *Quadtree) AddObject(bounds Bounds) error {
+	// Does object exist within the map range.
+	if !bounds.Intersects(qt.Bounds) {
 		return errors.New("object is not within map")
 	}
-	if checkCollision(bounds, m) {
+	// does object collide with another.
+	if CheckCollision(bounds, qt) {
 		return errors.New("collides with another")
 	}
-
-	m.qt.Insert(bounds)
-	m.objects = append(m.objects, obj)
+	qt.Insert(bounds)
 	return nil
 }
 
-func checkCollision(bound Bounds, m *Map) bool {
-	objects := m.qt.RetrieveIntersections(bound)
+func CheckCollision(bound Bounds, qt *Quadtree) bool {
+	objects := qt.RetrieveIntersections(bound)
 	return len(objects) > 0
 }
 
-func (m *Map) AddRandomObject() ObjectID {
+func (qt *Quadtree) AddRandomObject() ObjectID {
 	placed := false
 	var x, y float64
-	var obj Object
+	var obj Bounds
 	var err error
 
 	for !placed {
 		x = util.RandomFloat(0, width)
 		y = util.RandomFloat(0, height)
-		obj = NewObject(x, y, size, size)
-		err = m.AddObject(obj)
+		obj = NewBounds(x, y, size, size)
+		err = qt.AddObject(obj)
 		if err == nil {
 			placed = true
 		}
@@ -78,19 +64,11 @@ func (m *Map) AddRandomObject() ObjectID {
 	return obj.ID
 }
 
-func (m *Map) GetObject(ID ObjectID) (Object, error) {
-	for _, obj := range m.objects {
+func (qt *Quadtree) GetObject(ID ObjectID) (Bounds, error) {
+	for _, obj := range qt.Objects {
 		if obj.ID == ID {
 			return obj, nil
 		}
 	}
-	return Object{0, nil}, errors.New("unable to located object by ID")
-}
-
-func (m *Map) GetObjects() []Object {
-	return m.objects
-}
-
-func (m *Map) ClearMap() {
-	m.qt.Clear()
+	return Bounds{0, 0, 0, 0, 0}, errors.New("unable to located bounds by ID")
 }

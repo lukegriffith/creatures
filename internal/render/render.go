@@ -24,7 +24,7 @@ func renderCreature(x float64, y float64, imd *imdraw.IMDraw, win *pixelgl.Windo
 	imd.Draw(win)
 }
 
-func Render(wm *worldMap.Map) {
+func Render(wm *worldMap.Quadtree) {
 	var cycle int
 	cycle = 0
 
@@ -49,7 +49,7 @@ func Render(wm *worldMap.Map) {
 		case <-tick:
 			win.Clear(colornames.Aliceblue)
 
-			for _, obj := range wm.GetObjects() {
+			for _, obj := range wm.Objects {
 				fmt.Println(obj)
 				renderCreature(obj.X, obj.Y, imd, win)
 			}

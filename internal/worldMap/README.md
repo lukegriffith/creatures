@@ -1,1 +1,1 @@
-fork of https://github.com/JamesLMilner/quadtree-go/blob/master/quadtree_test.go
+quadtree files are a fork of https://github.com/JamesLMilner/quadtree-go/
