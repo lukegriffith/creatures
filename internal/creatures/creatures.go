@@ -7,21 +7,21 @@ import (
 )
 
 type Attributes struct {
-	Health   int
-	Strength int
+	Health   float64
+	Strength float64
 	// Focus is used as vision distance.
-	Focus int
-	Speed int
-	Age   int
+	Focus float64
+	Speed float64
+	Age   float64
 }
 
 func NewRandomAttributes() Attributes {
 	return Attributes{
-		util.RandomInt(60, 100),
-		util.RandomInt(1, 10),
-		util.RandomInt(10, 25),
-		util.RandomInt(1, 4),
-		util.RandomInt(0, 20),
+		util.RandomFloat(60, 100),
+		util.RandomFloat(1, 10),
+		util.RandomFloat(10, 25),
+		util.RandomFloat(1, 4),
+		util.RandomFloat(0, 20),
 	}
 }
 
@@ -34,12 +34,26 @@ type Creature struct {
 
 func (c Creature) Cycle(object worldMap.Bounds) worldMap.Bounds {
 	// Sense Environment
+	inputs := c.Sense()
 	// Input to NN
+	outputArr := c.Brain.Network.Predict(inputs.ReturnFloatArray())
 	// Process output neurons
+	output := neural.MapOutputNeurons(output)
 	// Return new bounds
+
 }
 
-func (c Creature) Sense() {
+func (c Creature) Sense() neural.InputNeurons {
+	// TO BE IMPLEMENTED
+	obj, err := c.Qt.GetObject(c.WorldObjectID)
+	if err != nil {
+		panic("Cant find creature")
+	}
+	return neural.MapInputNeurons(obj, c.Qt, c)
+
+}
+
+func (c Creature) Move(n neural.OutputNeurons) worldMap.Bounds {
 	// TO BE IMPLEMENTED
 }
 

@@ -6,7 +6,7 @@ import (
 )
 
 type Brain struct {
-	network *deep.Neural
+	Network *deep.Neural
 }
 
 func NewBrain() Brain {
@@ -37,11 +37,11 @@ func CreateNetwork(inputs int, layout []int) *deep.Neural {
 }
 
 func (n *Brain) Crossover(partner *Brain) Brain {
-	crossoverPoint := util.RandomInt(0, len(n.network.Layers))
-	l1 := n.network.Layers[:crossoverPoint]
-	l2 := partner.network.Layers[crossoverPoint:]
-	b1 := n.network.Biases[:crossoverPoint]
-	b2 := partner.network.Biases[crossoverPoint:]
+	crossoverPoint := util.RandomInt(0, len(n.Network.Layers))
+	l1 := n.Network.Layers[:crossoverPoint]
+	l2 := partner.Network.Layers[crossoverPoint:]
+	b1 := n.Network.Biases[:crossoverPoint]
+	b2 := partner.Network.Biases[crossoverPoint:]
 
 	l3 := append(l1, l2...)
 	b3 := append(b1, b2...)
@@ -49,7 +49,7 @@ func (n *Brain) Crossover(partner *Brain) Brain {
 		&deep.Neural{
 			Layers: l3,
 			Biases: b3,
-			Config: partner.network.Config,
+			Config: partner.Network.Config,
 		},
 	}
 	return brain
