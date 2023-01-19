@@ -26,11 +26,11 @@ func renderCreature(x float64, y float64, imd *imdraw.IMDraw, win *pixelgl.Windo
 }
 
 func renderSelectionZone(x float64, y float64, width float64, height float64, win *pixelgl.Window) {
+	rect := pixel.R(x, y, x+width, y+height)
 	imd := imdraw.New(nil)
 	imd.Color = colornames.Red
-	imd.Push(pixel.V(x, x+width))
-	imd.Push(pixel.V(y, y+height))
-	imd.Polygon(10)
+	imd.Push(rect.Min, rect.Max)
+	imd.Rectangle(1)
 	imd.Draw(win)
 }
 func Render(w *world.RealTimeWorld, selection worldMap.Bounds) *pixelgl.Window {
@@ -51,6 +51,7 @@ func Render(w *world.RealTimeWorld, selection worldMap.Bounds) *pixelgl.Window {
 	tick := time.Tick(frameRate)
 
 	imd := imdraw.New(nil)
+	log.Println("creatures in world: ", len(w.Qt.GetObjects()))
 	for cycle < 100 && !win.Closed() {
 
 		select {
@@ -69,7 +70,6 @@ func Render(w *world.RealTimeWorld, selection worldMap.Bounds) *pixelgl.Window {
 		}
 
 		win.Update()
-		log.Println(cycle)
 	}
 	return win
 }

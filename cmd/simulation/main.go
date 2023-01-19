@@ -17,10 +17,10 @@ var (
 	generations   = 10
 	selectionZone = worldMap.Bounds{
 		ID:     0,
-		X:      200,
-		Y:      200,
+		X:      0,
+		Y:      0,
 		Width:  100,
-		Height: 100,
+		Height: 500,
 	}
 )
 
