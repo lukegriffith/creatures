@@ -1,10 +1,11 @@
 package main
 
 import (
+	"log"
+
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/lukegriffith/creatures/internal/creatures"
 	"github.com/lukegriffith/creatures/internal/render"
-	"github.com/lukegriffith/creatures/internal/worldMap"
+	"github.com/lukegriffith/creatures/internal/world"
 )
 
 func main() {
@@ -13,9 +14,8 @@ func main() {
 }
 
 func run() {
-	world := worldMap.NewMap()
-	for i := 1; i < 40; i++ {
-		creatures.SpawnCreature(world)
-	}
+	world := world.NewWorld()
+	world.Populate(50)
+	log.Println(len(world.Qt.GetObjects()))
 	render.Render(world)
 }

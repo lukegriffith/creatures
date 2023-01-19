@@ -1,13 +1,13 @@
 package render
 
 import (
-	"fmt"
+	"log"
 	"time"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/lukegriffith/creatures/internal/worldMap"
+	"github.com/lukegriffith/creatures/internal/world"
 	"golang.org/x/image/colornames"
 )
 
@@ -20,11 +20,11 @@ func renderCreature(x float64, y float64, imd *imdraw.IMDraw, win *pixelgl.Windo
 	imd.Clear()
 	imd.Color = colornames.Navy
 	imd.Push(pixel.V(x, y))
-	imd.Ellipse(pixel.V(5, 5), 0)
+	imd.Ellipse(pixel.V(3, 3), 0)
 	imd.Draw(win)
 }
 
-func Render(wm *worldMap.Quadtree) {
+func Render(w *world.RealTimeWorld) {
 	var cycle int
 	cycle = 0
 
@@ -49,16 +49,17 @@ func Render(wm *worldMap.Quadtree) {
 		case <-tick:
 			win.Clear(colornames.Aliceblue)
 
-			for _, obj := range wm.Objects {
-				fmt.Println(obj)
+			for _, obj := range w.Qt.GetObjects() {
 				renderCreature(obj.X, obj.Y, imd, win)
 			}
 		}
 
 		if cycle < 498 {
+			w.Cycle()
 			cycle++
 		}
 
 		win.Update()
+		log.Println(cycle)
 	}
 }

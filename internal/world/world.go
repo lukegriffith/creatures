@@ -1,6 +1,8 @@
 package world
 
 import (
+	"log"
+
 	"github.com/lukegriffith/creatures/internal/creatures"
 	"github.com/lukegriffith/creatures/internal/worldMap"
 )
@@ -9,6 +11,14 @@ type RealTimeWorld struct {
 	Qt        *worldMap.Quadtree
 	nCycle    int
 	creatures []creatures.Creature
+}
+
+func NewWorld() *RealTimeWorld {
+	return &RealTimeWorld{
+		Qt:        worldMap.NewQuadTree(),
+		nCycle:    0,
+		creatures: nil,
+	}
 }
 
 func (w *RealTimeWorld) Populate(pop int) {
@@ -25,17 +35,22 @@ func (w *RealTimeWorld) Cycle() {
 		if err != nil {
 			panic("creature not found")
 		}
-		woUpdate := c.Cycle(wo)
+		woUpdate := c.Cycle(wo, w.Qt)
 		if worldMap.CheckCollision(woUpdate, w.Qt) {
 			// Add to old palce
 			err = newQt.AddObject(wo)
 			if err != nil {
-				panic("Cant insert object in old location")
+				log.Panicf("Cant insert object in old location", err)
 			}
 		} else {
 			// Addd to new place
 			err = newQt.AddObject(woUpdate)
-			panic("Cant insert object in new location")
+			if err != nil {
+				err = newQt.AddObject(wo)
+				if err != nil {
+					log.Println("Cant insert object in new or old location", err)
+				}
+			}
 		}
 	}
 	w.Qt = newQt

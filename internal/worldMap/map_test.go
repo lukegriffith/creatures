@@ -11,6 +11,10 @@ func TestAddingRandomsToMap(t *testing.T) {
 		obj := worldMap.AddRandomObject()
 		t.Log(obj)
 	}
+	if len(worldMap.GetObjects()) < 4 {
+		t.Log(len(worldMap.Objects))
+		t.Fail()
+	}
 }
 
 func TestCollisionByPoint(t *testing.T) {

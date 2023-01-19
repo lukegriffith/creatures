@@ -65,10 +65,14 @@ func (qt *Quadtree) AddRandomObject() ObjectID {
 }
 
 func (qt *Quadtree) GetObject(ID ObjectID) (Bounds, error) {
-	for _, obj := range qt.Objects {
+	for _, obj := range qt.GetObjects() {
 		if obj.ID == ID {
 			return obj, nil
 		}
 	}
 	return Bounds{0, 0, 0, 0, 0}, errors.New("unable to located bounds by ID")
+}
+
+func (qt *Quadtree) GetObjects() []Bounds {
+	return qt.Retrieve(qt.Bounds)
 }

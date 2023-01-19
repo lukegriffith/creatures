@@ -15,6 +15,6 @@ func TestCrossoverCreature(t *testing.T) {
 	b3 := b1.Crossover(b2)
 	t.Log(b3)
 
-	output := b3.network.Predict([]float64{1.0, 1.0, 1.0, 1.0, 1.0, 1.0})
+	output := b3.Network.Predict([]float64{1.0, 1.0, 1.0, 1.0, 1.0, 1.0})
 	t.Log(output)
 }

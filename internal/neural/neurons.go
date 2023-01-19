@@ -1,7 +1,6 @@
 package neural
 
 import (
-	"github.com/lukegriffith/creatures/internal/creatures"
 	"github.com/lukegriffith/creatures/internal/worldMap"
 )
 
@@ -12,10 +11,10 @@ type InputNeurons struct {
 	PopUp    float64
 }
 
-func popLeft(b worldMap.Bounds, qt worldMap.Quadtree, c creatures.Creature) float64 {
+func popLeft(b worldMap.Bounds, qt *worldMap.Quadtree, vision float64) float64 {
 	bounds := worldMap.Bounds{
 		ID:     0,
-		X:      b.X - c.Stats.Focus,
+		X:      b.X - vision,
 		Y:      b.Y,
 		Width:  2,
 		Height: 2,
@@ -24,10 +23,10 @@ func popLeft(b worldMap.Bounds, qt worldMap.Quadtree, c creatures.Creature) floa
 	return float64(len(insercetions))
 }
 
-func popRight(b worldMap.Bounds, qt *worldMap.Quadtree, c creatures.Creature) float64 {
+func popRight(b worldMap.Bounds, qt *worldMap.Quadtree, vision float64) float64 {
 	bounds := worldMap.Bounds{
 		ID:     0,
-		X:      b.X + c.Stats.Focus,
+		X:      b.X + vision,
 		Y:      b.Y,
 		Width:  2,
 		Height: 2,
@@ -36,11 +35,11 @@ func popRight(b worldMap.Bounds, qt *worldMap.Quadtree, c creatures.Creature) fl
 	return float64(len(insercetions))
 }
 
-func popDown(b worldMap.Bounds, qt *worldMap.Quadtree, c creatures.Creature) float64 {
+func popDown(b worldMap.Bounds, qt *worldMap.Quadtree, vision float64) float64 {
 	bounds := worldMap.Bounds{
 		ID:     0,
 		X:      b.X,
-		Y:      b.Y - c.Stats.Focus,
+		Y:      b.Y - vision,
 		Width:  2,
 		Height: 2,
 	}
@@ -48,11 +47,11 @@ func popDown(b worldMap.Bounds, qt *worldMap.Quadtree, c creatures.Creature) flo
 	return float64(len(insercetions))
 }
 
-func popUp(b worldMap.Bounds, qt *worldMap.Quadtree, c creatures.Creature) float64 {
+func popUp(b worldMap.Bounds, qt *worldMap.Quadtree, vision float64) float64 {
 	bounds := worldMap.Bounds{
 		ID:     0,
 		X:      b.X,
-		Y:      b.Y + c.Stats.Focus,
+		Y:      b.Y + vision,
 		Width:  2,
 		Height: 2,
 	}
@@ -60,12 +59,12 @@ func popUp(b worldMap.Bounds, qt *worldMap.Quadtree, c creatures.Creature) float
 	return float64(len(insercetions))
 }
 
-func MapInputNeurons(b worldMap.Bounds, qt *worldMap.Quadtree, c creatures.Creature) InputNeurons {
+func MapInputNeurons(b worldMap.Bounds, qt *worldMap.Quadtree, vision float64) InputNeurons {
 	return InputNeurons{
-		PopLeft:  popLeft(b, qt, c),
-		PopRight: popRight(b, qt, c),
-		PopDown:  popDown(b, qt, c),
-		PopUp:    popUp(b, qt, c),
+		PopLeft:  popLeft(b, qt, vision),
+		PopRight: popRight(b, qt, vision),
+		PopDown:  popDown(b, qt, vision),
+		PopUp:    popUp(b, qt, vision),
 	}
 }
 
