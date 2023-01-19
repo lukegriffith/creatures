@@ -15,10 +15,17 @@ import (
 )
 
 var (
-	generations   = 25
-	selectionZone = worldMap.Bounds{
+	generations = 25
+	_           = worldMap.Bounds{
 		ID:     0,
 		X:      0,
+		Y:      0,
+		Width:  100,
+		Height: 500,
+	}
+	selectionZone = worldMap.Bounds{
+		ID:     0,
+		X:      400,
 		Y:      0,
 		Width:  100,
 		Height: 500,

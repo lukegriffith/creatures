@@ -36,6 +36,7 @@ func CreateNetwork(inputs int, layout []int) *deep.Neural {
 	})
 }
 
+// TODO Add mutation!
 func (n *Brain) Crossover(partner *Brain) Brain {
 	crossoverPoint := util.RandomInt(0, len(n.Network.Layers))
 	l1 := n.Network.Layers[:crossoverPoint]
