@@ -14,18 +14,17 @@ import (
 )
 
 var (
-	generations   = 1
+	generations   = 10
 	selectionZone = worldMap.Bounds{
 		ID:     0,
-		X:      100,
-		Y:      100,
+		X:      200,
+		Y:      200,
 		Width:  100,
 		Height: 100,
 	}
 )
 
 func main() {
-
 	// Required for PixelGL to start.
 	pixelgl.Run(run)
 }
@@ -37,8 +36,11 @@ func run() {
 
 	for i := 0; i < generations; i++ {
 		log.Println("Generation:", i)
-		render.Render(world, selectionZone)
+		win := render.Render(world, selectionZone)
+		win.Destroy()
+		log.Println("Breeding Fittest")
 		world = world.BreedInSelection(50, selectionZone)
+		log.Println("Done")
 	}
 	reader := bufio.NewReader(os.Stdin)
 	for {
@@ -48,6 +50,7 @@ func run() {
 		text = strings.Replace(text, "\n", "", -1)
 
 		if strings.Compare("Y", text) == 0 {
+			world = world.NewWorldFromCreatures()
 			win := render.Render(world, selectionZone)
 			win.Destroy()
 		}

@@ -40,7 +40,7 @@ func (w *RealTimeWorld) Cycle() {
 			// Add to old palce
 			err = newQt.AddObject(wo)
 			if err != nil {
-				log.Panicf("Cant insert object in old location", err)
+				log.Panic("Cant insert object in old location", err)
 			}
 		} else {
 			// Addd to new place
@@ -81,6 +81,7 @@ out:
 		for _, c := range selectedCreatures {
 			for _, c2 := range selectedCreatures {
 				newPop = append(newPop, creatures.BreedCreaturePair(c, c2, newQt))
+				popCount++
 				if popCount >= n {
 					break out
 				}
@@ -93,4 +94,19 @@ out:
 		nCycle:    0,
 		creatures: newPop,
 	}
+}
+
+func (w *RealTimeWorld) NewWorldFromCreatures() *RealTimeWorld {
+	newW := &RealTimeWorld{
+		Qt:        worldMap.NewQuadTree(),
+		nCycle:    0,
+		creatures: nil,
+	}
+	for _, c := range w.creatures {
+		id := newW.Qt.AddRandomObject()
+		c.WorldObjectID = id
+		c.Qt = newW.Qt
+		newW.creatures = append(newW.creatures, c)
+	}
+	return newW
 }
