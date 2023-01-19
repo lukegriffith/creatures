@@ -55,3 +55,42 @@ func (w *RealTimeWorld) Cycle() {
 	}
 	w.Qt = newQt
 }
+
+func (w *RealTimeWorld) GetCreaturesInList(b []worldMap.Bounds) []creatures.Creature {
+	c := make([]creatures.Creature, 0)
+	cmap := map[worldMap.ObjectID]creatures.Creature{}
+
+	for _, creature := range w.creatures {
+		cmap[creature.WorldObjectID] = creature
+	}
+	for _, bounds := range b {
+		c = append(c, cmap[bounds.ID])
+	}
+	return c
+}
+
+func (w *RealTimeWorld) BreedInSelection(n int, b worldMap.Bounds) *RealTimeWorld {
+	selectedBounds := w.Qt.Retrieve(b)
+	selectedCreatures := w.GetCreaturesInList(selectedBounds)
+	newPop := make([]creatures.Creature, 0)
+	newQt := worldMap.NewQuadTree()
+	popCount := 0
+
+out:
+	for {
+		for _, c := range selectedCreatures {
+			for _, c2 := range selectedCreatures {
+				newPop = append(newPop, creatures.BreedCreaturePair(c, c2, newQt))
+				if popCount >= n {
+					break out
+				}
+			}
+		}
+	}
+
+	return &RealTimeWorld{
+		Qt:        newQt,
+		nCycle:    0,
+		creatures: newPop,
+	}
+}

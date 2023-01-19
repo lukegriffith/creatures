@@ -8,6 +8,7 @@ import (
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/lukegriffith/creatures/internal/world"
+	"github.com/lukegriffith/creatures/internal/worldMap"
 	"golang.org/x/image/colornames"
 )
 
@@ -24,9 +25,16 @@ func renderCreature(x float64, y float64, imd *imdraw.IMDraw, win *pixelgl.Windo
 	imd.Draw(win)
 }
 
-func Render(w *world.RealTimeWorld) {
-	var cycle int
-	cycle = 0
+func renderSelectionZone(x float64, y float64, width float64, height float64, win *pixelgl.Window) {
+	imd := imdraw.New(nil)
+	imd.Color = colornames.Red
+	imd.Push(pixel.V(x, x+width))
+	imd.Push(pixel.V(y, y+height))
+	imd.Polygon(2)
+	imd.Draw(win)
+}
+func Render(w *world.RealTimeWorld, selection worldMap.Bounds) *pixelgl.Window {
+	cycle := 0
 
 	cfg := pixelgl.WindowConfig{
 		Title:  "Creatures",
@@ -43,7 +51,7 @@ func Render(w *world.RealTimeWorld) {
 	tick := time.Tick(frameRate)
 
 	imd := imdraw.New(nil)
-	for !win.Closed() {
+	for cycle < 100 && !win.Closed() {
 
 		select {
 		case <-tick:
@@ -52,9 +60,10 @@ func Render(w *world.RealTimeWorld) {
 			for _, obj := range w.Qt.GetObjects() {
 				renderCreature(obj.X, obj.Y, imd, win)
 			}
+			renderSelectionZone(selection.X, selection.Y, selection.Width, selection.Height, win)
 		}
 
-		if cycle < 498 {
+		if cycle < 100 {
 			w.Cycle()
 			cycle++
 		}
@@ -62,4 +71,5 @@ func Render(w *world.RealTimeWorld) {
 		win.Update()
 		log.Println(cycle)
 	}
+	return win
 }
