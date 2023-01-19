@@ -17,6 +17,11 @@ const (
 	simLength               = 500
 )
 
+/*
+imd.Color = colornames.Navy
+imd.Push(pixel.V(200, 500), pixel.V(800, 500))
+imd.Ellipse(pixel.V(120, 80), 0)
+*/
 func renderCreature(x float64, y float64, imd *imdraw.IMDraw, win *pixelgl.Window) {
 	imd.Clear()
 	imd.Color = colornames.Navy
@@ -25,13 +30,23 @@ func renderCreature(x float64, y float64, imd *imdraw.IMDraw, win *pixelgl.Windo
 	imd.Draw(win)
 }
 
-func renderSelectionZone(x float64, y float64, width float64, height float64, win *pixelgl.Window) {
+func renderCreatures(c []worldMap.Bounds, imd *imdraw.IMDraw) {
+
+	positions := make([]pixel.Vec, 0)
+	for _, b := range c {
+		positions = append(positions, pixel.V(b.X, b.Y))
+	}
+	imd.Color = colornames.Navy
+	imd.Push(positions...)
+	imd.Ellipse(pixel.V(3, 3), 0)
+}
+
+func renderSelectionZone(x float64, y float64, width float64, height float64, imd *imdraw.IMDraw) {
 	rect := pixel.R(x, y, x+width, y+height)
-	imd := imdraw.New(nil)
 	imd.Color = colornames.Red
 	imd.Push(rect.Min, rect.Max)
 	imd.Rectangle(1)
-	imd.Draw(win)
+
 }
 func Render(w *world.RealTimeWorld, selection worldMap.Bounds) *pixelgl.Window {
 	cycle := 0
@@ -58,10 +73,11 @@ func Render(w *world.RealTimeWorld, selection worldMap.Bounds) *pixelgl.Window {
 		case <-tick:
 			win.Clear(colornames.Aliceblue)
 
-			for _, obj := range w.Qt.GetObjects() {
-				renderCreature(obj.X, obj.Y, imd, win)
-			}
-			renderSelectionZone(selection.X, selection.Y, selection.Width, selection.Height, win)
+			renderCreatures(w.Qt.GetObjects(), imd)
+			renderSelectionZone(selection.X, selection.Y, selection.Width, selection.Height, imd)
+
+			imd.Draw(win)
+			imd.Clear()
 		}
 
 		if cycle < 100 {

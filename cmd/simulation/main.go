@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -14,7 +15,7 @@ import (
 )
 
 var (
-	generations   = 10
+	generations   = 25
 	selectionZone = worldMap.Bounds{
 		ID:     0,
 		X:      0,
@@ -22,16 +23,26 @@ var (
 		Width:  100,
 		Height: 500,
 	}
+	ctx = context.Background()
 )
 
 func main() {
-	// Required for PixelGL to start.
 	pixelgl.Run(run)
 }
 
+/*
+func run() {
+	world := ctx.Value("world").(*world.RealTimeWorld)
+	selectionZone := ctx.Value("selectionZone").(worldMap.Bounds)
+	win := render.Render(world, selectionZone)
+	win.Destroy()
+}
+
+*/
+
 func run() {
 	world := world.NewWorld()
-	world.Populate(50)
+	world.Populate(100)
 	log.Println(len(world.Qt.GetObjects()))
 	reader := bufio.NewReader(os.Stdin)
 	for i := 0; i < generations; i++ {
@@ -39,11 +50,18 @@ func run() {
 		for _, b := range world.Qt.GetObjects() {
 			log.Printf("ID %d X %.0f Y %.0f", b.ID, b.X, b.Y)
 		}
-		log.Println("press enter")
-		_, _ = reader.ReadString('\n')
+		//log.Println("press enter")
+		//_, _ = reader.ReadString('\n')
 		log.Println("Generation:", i)
+		/*
+			ctx = context.WithValue(ctx, "world", world)
+			ctx = context.WithValue(ctx, "selectionZone", selectionZone)
+		*/
+		//pixelgl.Run(run)
+
 		win := render.Render(world, selectionZone)
 		win.Destroy()
+
 		log.Println("Breeding Fittest")
 		world = world.BreedInSelection(50, selectionZone)
 		log.Println("Done")
@@ -57,13 +75,21 @@ func run() {
 
 		if strings.Compare("Y", text) == 0 {
 			world = world.NewWorldFromCreatures()
+
+			/*
+				ctx = context.WithValue(ctx, "world", world)
+				ctx = context.WithValue(ctx, "selectionZone", selectionZone)
+			*/
+			//pixelgl.Run(run)
 			win := render.Render(world, selectionZone)
 			win.Destroy()
+
 		}
 
 		if strings.Compare("N", text) == 0 {
 			os.Exit(0)
 		}
 	}
+	// Required for PixelGL to start.
 
 }
