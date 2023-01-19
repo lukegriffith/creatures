@@ -30,7 +30,7 @@ func renderSelectionZone(x float64, y float64, width float64, height float64, wi
 	imd.Color = colornames.Red
 	imd.Push(pixel.V(x, x+width))
 	imd.Push(pixel.V(y, y+height))
-	imd.Polygon(2)
+	imd.Polygon(10)
 	imd.Draw(win)
 }
 func Render(w *world.RealTimeWorld, selection worldMap.Bounds) *pixelgl.Window {
