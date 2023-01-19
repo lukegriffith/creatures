@@ -1,6 +1,7 @@
 package world
 
 import (
+	"errors"
 	"log"
 
 	"github.com/lukegriffith/creatures/internal/creatures"
@@ -69,12 +70,16 @@ func (w *RealTimeWorld) GetCreaturesInList(b []worldMap.Bounds) []creatures.Crea
 	return c
 }
 
-func (w *RealTimeWorld) BreedInSelection(n int, b worldMap.Bounds) *RealTimeWorld {
-	selectedBounds := w.Qt.Retrieve(b)
+func (w *RealTimeWorld) BreedInSelection(n int, b worldMap.Bounds) (*RealTimeWorld, error) {
+	selectedBounds := w.Qt.RetrieveIntersections(b)
 	selectedCreatures := w.GetCreaturesInList(selectedBounds)
 	newPop := make([]creatures.Creature, 0)
 	newQt := worldMap.NewQuadTree()
 	popCount := 0
+
+	if len(selectedBounds) < 2 {
+		return nil, errors.New("population too sparse")
+	}
 
 out:
 	for {
@@ -93,7 +98,7 @@ out:
 		Qt:        newQt,
 		nCycle:    0,
 		creatures: newPop,
-	}
+	}, nil
 }
 
 func (w *RealTimeWorld) NewWorldFromCreatures() *RealTimeWorld {

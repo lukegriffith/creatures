@@ -48,6 +48,7 @@ func run() {
 */
 
 func run() {
+	var err error
 	world := world.NewWorld()
 	world.Populate(100)
 	log.Println(len(world.Qt.GetObjects()))
@@ -70,7 +71,10 @@ func run() {
 		win.Destroy()
 
 		log.Println("Breeding Fittest")
-		world = world.BreedInSelection(50, selectionZone)
+		world, err = world.BreedInSelection(50, selectionZone)
+		if err != nil {
+			log.Panic(err)
+		}
 		log.Println("Done")
 	}
 
