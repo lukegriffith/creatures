@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"context"
 	"fmt"
 	"log"
 	"os"
@@ -30,22 +29,12 @@ var (
 		Width:  100,
 		Height: 500,
 	}
-	ctx = context.Background()
 )
 
 func main() {
+	// Required for PixelGL to start.
 	pixelgl.Run(run)
 }
-
-/*
-func run() {
-	world := ctx.Value("world").(*world.RealTimeWorld)
-	selectionZone := ctx.Value("selectionZone").(worldMap.Bounds)
-	win := render.Render(world, selectionZone)
-	win.Destroy()
-}
-
-*/
 
 func run() {
 	var err error
@@ -58,14 +47,7 @@ func run() {
 		for _, b := range world.Qt.GetObjects() {
 			log.Printf("ID %d X %.0f Y %.0f", b.ID, b.X, b.Y)
 		}
-		//log.Println("press enter")
-		//_, _ = reader.ReadString('\n')
 		log.Println("Generation:", i)
-		/*
-			ctx = context.WithValue(ctx, "world", world)
-			ctx = context.WithValue(ctx, "selectionZone", selectionZone)
-		*/
-		//pixelgl.Run(run)
 
 		win := render.Render(world, selectionZone)
 		win.Destroy()
@@ -87,11 +69,6 @@ func run() {
 		if strings.Compare("Y", text) == 0 {
 			world = world.NewWorldFromCreatures()
 
-			/*
-				ctx = context.WithValue(ctx, "world", world)
-				ctx = context.WithValue(ctx, "selectionZone", selectionZone)
-			*/
-			//pixelgl.Run(run)
 			win := render.Render(world, selectionZone)
 			win.Destroy()
 
@@ -101,6 +78,5 @@ func run() {
 			os.Exit(0)
 		}
 	}
-	// Required for PixelGL to start.
 
 }
