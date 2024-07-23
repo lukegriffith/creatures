@@ -1,6 +1,8 @@
 package creatures
 
 import (
+	"log"
+
 	"github.com/lukegriffith/creatures/internal/neural"
 	"github.com/lukegriffith/creatures/internal/util"
 	"github.com/lukegriffith/creatures/internal/worldMap"
@@ -32,10 +34,11 @@ type Creature struct {
 	Brain         neural.Brain
 }
 
-func (c Creature) Cycle(object worldMap.Bounds, qt *worldMap.Quadtree) worldMap.Bounds {
+func (c Creature) Cycle(object worldMap.Bounds, qt *worldMap.Quadtree, osc float64, age float64) worldMap.Bounds {
 	// Sense Environment
-	inputs := c.Sense()
+	inputs := c.Sense(osc, age)
 	// Input to NN
+	log.Println("Network In", inputs.ReturnFloatArray())
 	outputArr := c.Brain.Network.Predict(inputs.ReturnFloatArray())
 	// Process output neurons
 	output := neural.MapOutputNeurons(outputArr)
@@ -43,12 +46,12 @@ func (c Creature) Cycle(object worldMap.Bounds, qt *worldMap.Quadtree) worldMap.
 	return c.Move(output, object, qt)
 }
 
-func (c Creature) Sense() neural.InputNeurons {
+func (c Creature) Sense(osc float64, age float64) neural.InputNeurons {
 	obj, err := c.Qt.GetObject(c.WorldObjectID)
 	if err != nil {
 		panic("Cant find creature")
 	}
-	return neural.MapInputNeurons(obj, c.Qt, c.Stats.Focus)
+	return neural.MapInputNeurons(obj, c.Qt, c.Stats.Focus, osc, age)
 
 }
 
@@ -61,7 +64,9 @@ func (c Creature) Move(n neural.OutputNeurons, bounds worldMap.Bounds, qt *world
 	if err != nil {
 		panic("unable to find creature")
 	}
-
+	log.Println(n)
+	log.Println("IDX:", largestIndex)
+	log.Println()
 	if largestIndex == leftIdx {
 		newX := bounds.X - stride
 		bounds.X = newX

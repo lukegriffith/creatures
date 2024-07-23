@@ -11,7 +11,7 @@ type Brain struct {
 
 func NewBrain() Brain {
 	return Brain{
-		CreateNetwork(6, []int{2, 2, 4}),
+		CreateNetwork(8, []int{4, 2, 4}),
 	}
 }
 
@@ -22,15 +22,15 @@ func CreateNetwork(inputs int, layout []int) *deep.Neural {
 		/* Two hidden layers consisting of two neurons each, and a single output */
 		Layout: layout,
 		/* Activation functions: Sigmoid, Tanh, ReLU, Linear */
-		Activation: deep.ActivationSigmoid,
+		Activation: deep.ActivationReLU,
 		/* Determines output layer activation & loss function:
 		ModeRegression: linear outputs with MSE loss
 		ModeMultiClass: softmax output with Cross Entropy loss
 		ModeMultiLabel: sigmoid output with Cross Entropy loss
 		ModeBinary: sigmoid output with binary CE loss */
-		Mode: deep.ModeBinary,
+		Mode: deep.ModeDefault,
 		/* Weight initializers: {deep.NewNormal(μ, σ), deep.NewUniform(μ, σ)} */
-		Weight: deep.NewNormal(1.0, 0.0),
+		Weight: deep.NewUniform(0.5, 1.0),
 		/* Apply bias */
 		Bias: true,
 	})

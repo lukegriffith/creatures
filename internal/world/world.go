@@ -36,7 +36,7 @@ func (w *RealTimeWorld) Cycle() {
 		if err != nil {
 			panic("creature not found")
 		}
-		woUpdate := c.Cycle(wo, w.Qt)
+		woUpdate := c.Cycle(wo, w.Qt, w.Oscilator(), float64(w.GetCycle()))
 		if worldMap.CheckCollision(woUpdate, w.Qt) {
 			// Add to old palce
 			err = newQt.AddObject(wo)
@@ -114,4 +114,12 @@ func (w *RealTimeWorld) NewWorldFromCreatures() *RealTimeWorld {
 		newW.creatures = append(newW.creatures, c)
 	}
 	return newW
+}
+
+func (w *RealTimeWorld) Oscilator() float64 {
+	return float64(w.nCycle%10) / 10
+}
+
+func (w *RealTimeWorld) GetCycle() int {
+	return w.nCycle
 }

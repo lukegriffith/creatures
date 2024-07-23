@@ -38,22 +38,22 @@ func main() {
 
 func run() {
 	var err error
-	world := world.NewWorld()
-	world.Populate(100)
-	log.Println(len(world.Qt.GetObjects()))
+	w := world.NewWorld()
+	w.Populate(100)
+	log.Println(len(w.Qt.GetObjects()))
 	reader := bufio.NewReader(os.Stdin)
 	for i := 0; i < generations; i++ {
 
-		for _, b := range world.Qt.GetObjects() {
+		for _, b := range w.Qt.GetObjects() {
 			log.Printf("ID %d X %.0f Y %.0f", b.ID, b.X, b.Y)
 		}
 		log.Println("Generation:", i)
 
-		win := render.Render(world, selectionZone)
+		win := render.Render(w, selectionZone)
 		win.Destroy()
 
 		log.Println("Breeding Fittest")
-		world, err = world.BreedInSelection(50, selectionZone)
+		w, err = w.BreedInSelection(50, selectionZone)
 		if err != nil {
 			log.Panic(err)
 		}
@@ -67,9 +67,9 @@ func run() {
 		text = strings.Replace(text, "\n", "", -1)
 
 		if strings.Compare("Y", text) == 0 {
-			world = world.NewWorldFromCreatures()
+			w = w.NewWorldFromCreatures()
 
-			win := render.Render(world, selectionZone)
+			win := render.Render(w, selectionZone)
 			win.Destroy()
 
 		}

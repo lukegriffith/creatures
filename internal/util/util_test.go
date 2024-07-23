@@ -19,3 +19,14 @@ func TestRandomNumber(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestMinMax(t *testing.T) {
+	f := []float64{1.0, 1.0, 2.0, 0.5}
+	min, max := MinMax(f)
+	if min != 3 {
+		t.Fail()
+	}
+	if max != 2 {
+		t.Fail()
+	}
+}
